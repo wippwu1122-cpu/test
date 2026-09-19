@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哆啦A夢數學大冒險：百寶袋解題挑戰</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --doraemon-blue: #0099e5;
+            --doraemon-blue-dark: #0077b6;
+            --doraemon-blue-light: #56c1f5;
+            --doraemon-white: #ffffff;
+            --doraemon-red: #e63946;
+            --doraemon-red-dark: #c1121f;
+            --doraemon-yellow: #ffbe0b;
+            --doraemon-yellow-light: #ffe066;
+            --doraemon-nose-red: #e63946;
+            --doraemon-belly: #ffffff;
+            --bg-sky: #d4f0ff;
+            --bg-grass: #a8e6a3;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --text-dark: #2d3748;
+            --text-medium: #4a5568;
+            --text-light: #718096;
+            --success: #38a169;
+            --error: #e53e3e;
+            --shadow-blue: rgba(0, 153, 229, 0.25);
+            --shadow-soft: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Noto Sans TC', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: linear-gradient(180deg, var(--bg-sky) 0%, #e8f8ff 50%, #c8f0c8 85%, var(--bg-grass) 100%);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== 漂浮雲朵背景 ===== */
+        body::before, body::after {
+            content: '☁️';
+            position: fixed;
+            font-size: 60px;
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+            animation: float-cloud 20s linear infinite;
+        }
+        body::before { top: 8%; left: -80px; animation-delay: 0s; }
+        body::after { top: 20%; left: -80px; animation-delay: 10s; font-size: 45px; }
+
+        @keyframes float-cloud {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        /* ===== 可愛彈跳動畫 ===== */
+        @keyframes bounce-cute {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px var(--shadow-blue); }
+            50% { box-shadow: 0 0 35px var(--shadow-blue), 0 0 60px rgba(0, 153, 229, 0.1); }
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bell-ring {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(14deg); }
+            20% { transform: rotate(-12deg); }
+            30% { transform: rotate(10deg); }
+            40% { transform: rotate(-8deg); }
+            50% { transform: rotate(6deg); }
+            60% { transform: rotate(-4deg); }
+            70% { transform: rotate(2deg); }
+            80% { transform: rotate(-1deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .animate-bounce-cute { animation: bounce-cute 2s ease-in-out infinite; }
+        .animate-wiggle { animation: wiggle 1s ease-in-out infinite; }
+        .animate-sparkle { animation: sparkle 2s ease-in-out infinite; }
+        .animate-slide-up { animation: slide-up 0.6s ease-out; }
+        .animate-bell { animation: bell-ring 1.5s ease-in-out infinite; }
+
+        /* ===== 頂部導航列 (哆啦A夢風格) ===== */
+        header {
+            width: 100%;
+            max-width: 850px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, var(--doraemon-blue), var(--doraemon-blue-dark));
+            border-radius: 20px;
+            padding: 14px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 30px var(--shadow-blue), 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+            border: 3px solid var(--doraemon-blue-light);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--doraemon-white);
+            border: 3px solid var(--doraemon-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .header-title {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--doraemon-white);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+
+        .header-subtitle {
+            font-size: 0.7rem;
+            color: var(--doraemon-yellow-light);
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-box {
+            text-align: right;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.75);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--doraemon-yellow);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+
+        .stat-value.timer {
+            color: #ff6b6b;
+            animation: pulse-glow 2s infinite;
+            border-radius: 8px;
+            padding: 2px 6px;
+        }
+
+        /* ===== 主要內容卡片 ===== */
+        main {
+            width: 100%;
+            max-width: 850px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            width: 100%;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 3px solid var(--doraemon-blue-light);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 12px 40px var(--shadow-soft), 0 4px 15px var(--shadow-blue);
+            position: relative;
+            overflow: hidden;
+            animation: slide-up 0.5s ease-out;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--doraemon-blue), var(--doraemon-blue-light), var(--doraemon-yellow), var(--doraemon-red));
+            border-radius: 24px 24px 0 0;
+        }
+
+        /* 裝飾圓點 - 模仿哆啦A夢的鈴鐺 */
+        .card-deco-left, .card-deco-right {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            opacity: 0.08;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .card-deco-left {
+            background: var(--doraemon-blue);
+            top: -20px;
+            left: -20px;
+        }
+        .card-deco-right {
+            background: var(--doraemon-yellow);
+            bottom: -20px;
+            right: -20px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* ===== 歡迎頁面 ===== */
+        .welcome-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--doraemon-blue-light), var(--doraemon-blue));
+            border: 4px solid var(--doraemon-yellow);
+            font-size: 40px;
+            margin-bottom: 16px;
+            box-shadow: 0 6px 20px var(--shadow-blue);
+            animation: bounce-cute 2s ease-in-out infinite;
+        }
+
+        .welcome-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--doraemon-blue-dark);
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.05);
+        }
+
+        .welcome-desc {
+            color: var(--text-medium);
+            max-width: 560px;
+            margin: 0 auto 28px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .welcome-desc .highlight {
+            color: var(--doraemon-blue);
+            font-weight: 700;
+        }
+
+        /* 階段卡片 */
+        .stage-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            max-width: 600px;
+            margin: 0 auto 28px;
+        }
+
+        @media (max-width: 640px) {
+            .stage-grid { grid-template-columns: 1fr; }
+        }
+
+        .stage-card {
+            background: linear-gradient(135deg, #f0f9ff, #e8f4fd);
+            border: 2px solid var(--doraemon-blue-light);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px var(--shadow-blue);
+            border-color: var(--doraemon-blue);
+        }
+
+        .stage-card .stage-title {
+            color: var(--doraemon-blue);
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .stage-card .stage-desc {
+            color: var(--text-light);
+            font-size: 0.72rem;
+            line-height: 1.5;
+        }
+
+        /* 按鈕樣式 */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, var(--doraemon-blue), var(--doraemon-blue-dark));
+            color: white;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px var(--shadow-blue);
+            transition: all 0.3s ease;
+            font-family: inherit;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px var(--shadow-blue);
+            background: linear-gradient(135deg, var(--doraemon-blue-light), var(--doraemon-blue));
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            flex: 1;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, var(--success), #2d8f5e);
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 161, 105, 0.35);
+        }
+
+        .btn-hint {
+            padding: 14px 18px;
+            background: linear-gradient(135deg, var(--doraemon-yellow), #f0a500);
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: 3px solid var(--doraemon-yellow-light);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-hint:hover {
+            transform: translateY(-2px) rotate(-2deg);
+            box-shadow: 0 6px 20px rgba(255, 190, 11, 0.3);
+        }
+
+        .btn-restart {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--doraemon-blue), var(--doraemon-blue-dark));
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px var(--shadow-blue);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--shadow-blue);
+        }
+
+        /* ===== 遊戲頁面 ===== */
+        .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px dashed var(--doraemon-blue-light);
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--doraemon-blue-light), var(--doraemon-blue));
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 3px 10px var(--shadow-blue);
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .progress-value {
+            color: var(--doraemon-blue);
+            font-weight: 900;
+        }
+
+        /* 題目情境區 */
+        .problem-area {
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 2px solid var(--doraemon-blue-light);
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .problem-area::after {
+            content: '🔔';
+            position: absolute;
+            top: -14px;
+            right: 16px;
+            font-size: 28px;
+            animation: bell-ring 1.5s ease-in-out infinite;
+        }
+
+        .problem-scenario {
+            color: var(--doraemon-blue-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            background: rgba(255,255,255,0.7);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border-left: 4px solid var(--doraemon-blue);
+            line-height: 1.7;
+        }
+
+        /* 方程式顯示區 */
+        .equation-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .equation-wrapper {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 16px 28px;
+            border-radius: 16px;
+            border: 3px solid var(--doraemon-yellow);
+            box-shadow: 0 4px 15px rgba(255, 190, 11, 0.2);
+        }
+
+        .equation-brace {
+            color: var(--doraemon-red);
+            font-size: 2.2rem;
+            margin-right: 12px;
+            font-weight: 300;
+        }
+
+        .equation-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* 輸入區域 */
+        .input-area {
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .input-title {
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .input-box {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .input-box:focus-within {
+            border-color: var(--doraemon-blue);
+            box-shadow: 0 0 0 4px rgba(0, 153, 229, 0.1);
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.72rem;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .input-field {
+            width: 100%;
+            background: white;
+            border: 2px solid var(--doraemon-blue-light);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--doraemon-blue-dark);
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-field::placeholder {
+            color: #cbd5e0;
+        }
+
+        .input-field:focus {
+            border-color: var(--doraemon-blue);
+            box-shadow: 0 0 0 3px rgba(0, 153, 229, 0.15);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .feedback-box {
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            min-height: 2rem;
+            line-height: 2rem;
+        }
+
+        .feedback-correct { color: var(--success); }
+        .feedback-wrong { color: var(--error); }
+
+        /* ===== 結束頁面 ===== */
+        .result-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .result-icon.fail {
+            background: linear-gradient(135deg, #fed7d7, #fff5f5);
+            border: 4px solid var(--doraemon-red);
+            box-shadow: 0 6px 20px rgba(229, 62, 62, 0.2);
+        }
+
+        .result-icon.win {
+            background: linear-gradient(135deg, #c6f6d5, #f0fff4);
+            border: 4px solid var(--success);
+            box-shadow: 0 6px 20px rgba(56, 161, 105, 0.2);
+            animation: bounce-cute 2s ease-in-out infinite;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .result-title.fail { color: var(--doraemon-red); }
+        .result-title.win { color: var(--success); }
+
+        .result-desc {
+            color: var(--text-medium);
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .result-score-box {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .result-stat-label {
+            font-size: 0.72rem;
+            color: var(--text-light);
+        }
+
+        .result-stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+
+        .result-stat-value.score { color: var(--doraemon-blue); }
+        .result-stat-value.time { color: var(--doraemon-yellow); }
+
+        /* ===== 模態對話框 ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 100;
+        }
+
+        .modal-box {
+            background: white;
+            border: 3px solid var(--doraemon-blue-light);
+            border-radius: 24px;
+            padding: 28px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            animation: slide-up 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--doraemon-blue), var(--doraemon-yellow), var(--doraemon-red));
+        }
+
+        .modal-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--doraemon-blue-dark);
+            margin-bottom: 8px;
+        }
+
+        .modal-message {
+            color: var(--text-medium);
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+
+        .btn-modal {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--doraemon-blue), var(--doraemon-blue-dark));
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: 0 4px 15px var(--shadow-blue);
+            transition: all 0.3s ease;
+        }
+
+        .btn-modal:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ===== 哆啦A夢裝飾元素 ===== */
+        .deco-dorayaki {
+            position: fixed;
+            font-size: 30px;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .deco-dorayaki:nth-child(1) { top: 15%; right: 5%; animation: bounce-cute 3s ease-in-out infinite; }
+        .deco-dorayaki:nth-child(2) { bottom: 20%; left: 3%; animation: bounce-cute 4s ease-in-out infinite 0.5s; }
+        .deco-dorayaki:nth-child(3) { top: 45%; right: 2%; animation: wiggle 3s ease-in-out infinite; font-size: 25px; }
+        .deco-dorayaki:nth-child(4) { bottom: 10%; right: 8%; animation: bounce-cute 3.5s ease-in-out infinite 1s; font-size: 22px; }
+
+        /* ===== 哆啦A夢臉部裝飾 (CSS繪製) ===== */
+        .doraemon-face {
+            width: 100px;
+            height: 90px;
+            background: var(--doraemon-blue);
+            border-radius: 50%;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 10px;
+            border: 3px solid var(--doraemon-blue-dark);
+        }
+
+        .doraemon-face .white-face {
+            width: 80px;
+            height: 68px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .doraemon-face .nose {
+            width: 14px;
+            height: 14px;
+            background: var(--doraemon-red);
+            border-radius: 50%;
+            position: absolute;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+        }
+
+        .doraemon-face .eye {
+            width: 16px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 14px;
+            border: 2px solid var(--text-dark);
+            z-index: 2;
+        }
+        .doraemon-face .eye.left { left: 32px; }
+        .doraemon-face .eye.right { right: 32px; }
+
+        .doraemon-face .eye::after {
+            content: '';
+            width: 6px;
+            height: 8px;
+            background: var(--text-dark);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .doraemon-face .whisker {
+            position: absolute;
+            width: 22px;
+            height: 2px;
+            background: var(--text-dark);
+            z-index: 2;
+        }
+        .doraemon-face .whisker.l1 { top: 38px; left: 6px; transform: rotate(-10deg); }
+        .doraemon-face .whisker.l2 { top: 45px; left: 4px; }
+        .doraemon-face .whisker.l3 { top: 52px; left: 6px; transform: rotate(10deg); }
+        .doraemon-face .whisker.r1 { top: 38px; right: 6px; transform: rotate(10deg); }
+        .doraemon-face .whisker.r2 { top: 45px; right: 4px; }
+        .doraemon-face .whisker.r3 { top: 52px; right: 6px; transform: rotate(-10deg); }
+
+        .doraemon-face .bell {
+            width: 18px;
+            height: 18px;
+            background: var(--doraemon-yellow);
+            border-radius: 50%;
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 2px solid #c8960a;
+            z-index: 3;
+        }
+
+        .doraemon-face .collar {
+            width: 76px;
+            height: 10px;
+            background: var(--doraemon-red);
+            border-radius: 0 0 6px 6px;
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        /* ===== RWD 響應式 ===== */
+        @media (max-width: 640px) {
+            header { padding: 10px 14px; border-radius: 16px; }
+            .header-title { font-size: 0.95rem; }
+            .card { padding: 20px 16px; }
+            .welcome-title { font-size: 1.4rem; }
+            .equation-content { font-size: 1rem; }
+            .equation-wrapper { padding: 12px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 哆啦A夢裝飾元素 -->
+    <div class="deco-dorayaki">🥮</div>
+    <div class="deco-dorayaki">⭐</div>
+    <div class="deco-dorayaki">🔔</div>
+    <div class="deco-dorayaki">🌸</div>
+
+    <header>
+        <div class="header-left">
+            <div class="header-icon">🔔</div>
+            <div>
+                <div class="header-title">哆啦A夢數學大冒險</div>
+                <div class="header-subtitle">和哆啦A夢一起解開百寶袋密碼吧！</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="stat-box">
+                <div class="stat-label">冒險積分</div>
+                <div id="score-display" class="stat-value">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">剩餘時間</div>
+                <div id="timer-display" class="stat-value timer">03:00</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- 1. 首頁/歡迎畫面 -->
+        <div id="screen-welcome" class="card" style="text-align:center;">
+            <div class="card-deco-left"></div>
+            <div class="card-deco-right"></div>
+
+            <!-- CSS 繪製的哆啦A夢臉 -->
+            <div class="doraemon-face animate-bounce-cute">
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="white-face"></div>
+                <div class="nose"></div>
+                <div class="whisker l1"></div>
+                <div class="whisker l2"></div>
+                <div class="whisker l3"></div>
+                <div class="whisker r1"></div>
+                <div class="whisker r2"></div>
+                <div class="whisker r3"></div>
+                <div class="collar"></div>
+                <div class="bell"></div>
+            </div>
+
+            <h2 class="welcome-title">哆啦A夢數學大冒險</h2>
+            <p class="welcome-desc">
+                大雄又遇到數學難題啦！哆啦A夢決定從百寶袋拿出<span class="highlight">「解題道具」</span>，
+                但道具的密碼鎖需要用<span class="highlight">代入消去法</span>與<span class="highlight">加減消去法</span>破解兩組未知數才能打開！快來幫忙吧！🌟
+            </p>
+
+            <div class="stage-grid">
+                <div class="stage-card">
+                    <div class="stage-title">🌟 階段一</div>
+                    <div class="stage-desc">基礎加減消去：解出正確整數 x, y 組合。</div>
+                </div>
+                <div class="stage-card">
+                    <div class="stage-title">🌟 階段二</div>
+                    <div class="stage-desc">倍數運算挑戰：處理係數變換的進階題型。</div>
+                </div>
+                <div class="stage-card">
+                    <div class="stage-title">🌟 階段三</div>
+                    <div class="stage-desc">文字情境解密：從情境列出聯立方程式。</div>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="btn-primary">
+                開始冒險吧！ 🚀
+            </button>
+        </div>
+
+        <!-- 2. 遊戲進行畫面 -->
+        <div id="screen-game" class="card hidden" style="display:flex; flex-direction:column; align-items:center;">
+            <div class="card-deco-left"></div>
+            <div class="card-deco-right"></div>
+
+            <!-- 關卡進度 -->
+            <div class="game-header">
+                <div>
+                    <span id="level-badge" class="level-badge">
+                        關卡 1-1：新手訓練營
+                    </span>
+                </div>
+                <div class="progress-label">
+                    進度：<span id="progress-text" class="progress-value">1 / 5</span>
+                </div>
+            </div>
+
+            <!-- 題目與情境區 -->
+            <div class="problem-area">
+                <div id="problem-scenario" class="problem-scenario">
+                    <!-- 題目描述或情境文字 -->
+                </div>
+
+                <!-- 聯立方程式顯示 -->
+                <div class="equation-display">
+                    <div class="equation-wrapper">
+                        <span class="equation-brace">{</span>
+                        <div id="equation-box" class="equation-content">
+                            <div>2x + 3y = 12</div>
+                            <div>x - y = 1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 玩家輸入密碼區 -->
+            <div class="input-area">
+                <h3 class="input-title">🔐 請輸入破解此方程式的未知數解</h3>
+
+                <div class="input-grid">
+                    <div class="input-box">
+                        <label class="input-label">X 的數值</label>
+                        <input type="number" id="input-x" class="input-field" placeholder="?">
+                    </div>
+                    <div class="input-box">
+                        <label class="input-label">Y 的數值</label>
+                        <input type="number" id="input-y" class="input-field" placeholder="?">
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button onclick="checkAnswer()" class="btn-success">
+                        確認解密 🔓
+                    </button>
+                    <button onclick="showHint()" class="btn-hint">
+                        💡 提示
+                    </button>
+                </div>
+            </div>
+
+            <div id="feedback-box" class="feedback-box"></div>
+        </div>
+
+        <!-- 3. 遊戲結束/失敗畫面 -->
+        <div id="screen-gameover" class="card hidden" style="text-align:center; max-width:480px; margin:0 auto;">
+            <div class="card-deco-left"></div>
+            <div class="card-deco-right"></div>
+
+            <div class="result-icon fail">
+                😢
+            </div>
+            <h2 class="result-title fail">嗚嗚～道具密碼鎖沒打開</h2>
+            <p id="gameover-reason" class="result-desc">時間耗盡或解題錯誤次數過多，大雄的數學作業還是沒寫完！</p>
+
+            <div class="result-score-box">
+                <div>
+                    <div class="result-stat-label">最終獲得積分</div>
+                    <div id="final-score" class="result-stat-value score">0</div>
+                </div>
+            </div>
+
+            <button onclick="restartGame()" class="btn-restart">
+                再試一次吧！ 🔄
+            </button>
+        </div>
+
+        <!-- 4. 勝利通關畫面 -->
+        <div id="screen-victory" class="card hidden" style="text-align:center; max-width:480px; margin:0 auto;">
+            <div class="card-deco-left"></div>
+            <div class="card-deco-right"></div>
+
+            <div class="result-icon win">
+                🎉
+            </div>
+            <h2 class="result-title win">太棒了！百寶袋密碼全破解！</h2>
+            <p class="result-desc">哆啦A夢超開心～你完美破解了所有二元一次聯立方程式，大雄的數學再也不用擔心了！🌈✨</p>
+
+            <div class="result-score-box">
+                <div>
+                    <div class="result-stat-label">最終積分</div>
+                    <div id="victory-score" class="result-stat-value score">0</div>
+                </div>
+                <div>
+                    <div class="result-stat-label">花費時間</div>
+                    <div id="victory-time" class="result-stat-value time">00:00</div>
+                </div>
+            </div>
+
+            <button onclick="restartGame()" class="btn-restart">
+                再次挑戰 ⭐
+            </button>
+        </div>
+
+    </main>
+
+    <!-- 訊息提示彈窗 -->
+    <div id="custom-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div id="modal-icon" class="modal-icon">💡</div>
+            <h3 id="modal-title" class="modal-title">提示</h3>
+            <p id="modal-message" class="modal-message">提示內容...</p>
+            <button onclick="closeModal()" class="btn-modal">
+                了解了！ 😊
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲狀態變數
+        let score = 0;
+        let timeLeft = 180; // 3分鐘
+        let timerInterval = null;
+        let currentLevelIndex = 0;
+        let currentProblemIndex = 0;
+        let currentSolution = { x: 0, y: 0 };
+        let currentHintText = "";
+
+        // 關卡題目資料庫 (確保生成的方程組皆有整數解)
+        const levels = [
+            {
+                name: "關卡 1：新手冒險 (基礎加減法)",
+                problems: [
+                    {
+                        scenario: "🔔 百寶袋密碼鎖 A：兩式相加即可消去 y 變數，快幫哆啦A夢打開道具！",
+                        eq1: { a: 1, b: 1, c: 7, text: "x + y = 7" },
+                        eq2: { a: 1, b: -1, c: 3, text: "x - y = 3" },
+                        sol: { x: 5, y: 2 },
+                        hint: "觀察兩方程式，y 的係數互為相反數 (1 與 -1)。試著將兩式相加消除 y！"
+                    },
+                    {
+                        scenario: "🔔 百寶袋密碼鎖 B：兩式相減即可消去 x 變數，道具就在眼前了！",
+                        eq1: { a: 2, b: 1, c: 8, text: "2x + y = 8" },
+                        eq2: { a: 1, b: 1, c: 5, text: "x + y = 5" },
+                        sol: { x: 3, y: 2 },
+                        hint: "x 的係數都是 1，將第一式減去第二式即可消去 x。"
+                    }
+                ]
+            },
+            {
+                name: "關卡 2：進階挑戰 (係數倍乘法)",
+                problems: [
+                    {
+                        scenario: "⭐ 百寶袋密碼鎖 C：需將第二式同乘以 2 才能消去 x，這題比較難喔！",
+                        eq1: { a: 2, b: 3, c: 12, text: "2x + 3y = 12" },
+                        eq2: { a: 1, b: -1, c: 1, text: "x - y = 1" },
+                        sol: { x: 3, y: 2 },
+                        hint: "把第二式等號兩邊同乘以 2，變成 2x - 2y = 2，再與第一式相減。"
+                    },
+                    {
+                        scenario: "⭐ 百寶袋密碼鎖 D：調整係數使 y 係數對齊，哆啦A夢在旁邊幫你加油！",
+                        eq1: { a: 3, b: 2, c: 16, text: "3x + 2y = 16" },
+                        eq2: { a: 1, b: 1, c: 6, text: "x + y = 6" },
+                        sol: { x: 4, y: 2 },
+                        hint: "將第二式乘以 2 變成 2x + 2y = 12，與第一式相減即可消去 y。"
+                    }
+                ]
+            },
+            {
+                name: "關卡 3：大冒險 (文字應用題)",
+                problems: [
+                    {
+                        scenario: "🌟 最終挑戰！大雄和靜香去文具店買東西。3支自動鉛筆與2本筆記本共 160 元；1支自動鉛筆與 1本筆記本共 60 元。求自動鉛筆(x)與筆記本(y)各多少元？",
+                        eq1: { a: 3, b: 2, c: 160, text: "3x + 2y = 160" },
+                        eq2: { a: 1, b: 1, c: 60, text: "x + y = 60" },
+                        sol: { x: 40, y: 20 },
+                        hint: "設自動鉛筆為 x 元，筆記本為 y 元。將第二式乘以 2 得到 2x + 2y = 120，與第一式相減求出 x。"
+                    }
+                ]
+            }
+        ];
+
+        function startGame() {
+            document.getElementById('screen-welcome').classList.add('hidden');
+            const gameScreen = document.getElementById('screen-game');
+            gameScreen.classList.remove('hidden');
+            gameScreen.style.display = 'flex';
+
+            score = 0;
+            timeLeft = 180;
+            currentLevelIndex = 0;
+            currentProblemIndex = 0;
+
+            updateHUD();
+            loadCurrentProblem();
+            startTimer();
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    triggerGameOver("時間耗盡了～哆啦A夢的百寶袋還是鎖著的！");
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer-display').innerText =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateHUD() {
+            document.getElementById('score-display').innerText = score;
+            const currentLevel = levels[currentLevelIndex];
+            document.getElementById('level-badge').innerText = currentLevel.name;
+            const totalProbs = currentLevel.problems.length;
+            document.getElementById('progress-text').innerText = `${currentProblemIndex + 1} / ${totalProbs}`;
+        }
+
+        function loadCurrentProblem() {
+            const prob = levels[currentLevelIndex].problems[currentProblemIndex];
+            currentSolution = prob.sol;
+            currentHintText = prob.hint;
+
+            document.getElementById('problem-scenario').innerText = prob.scenario;
+            document.getElementById('equation-box').innerHTML = `
+                <div>${prob.eq1.text}</div>
+                <div>${prob.eq2.text}</div>
+            `;
+
+            document.getElementById('input-x').value = '';
+            document.getElementById('input-y').value = '';
+            document.getElementById('feedback-box').innerHTML = '';
+            updateHUD();
+        }
+
+        function checkAnswer() {
+            const inputX = parseInt(document.getElementById('input-x').value);
+            const inputY = parseInt(document.getElementById('input-y').value);
+            const feedbackBox = document.getElementById('feedback-box');
+
+            if (isNaN(inputX) || isNaN(inputY)) {
+                showModal("⚠️ 提醒", "哆啦A夢說：請完整填寫 X 與 Y 的數值再進行解密喔！", "⚠️");
+                return;
+            }
+
+            if (inputX === currentSolution.x && inputY === currentSolution.y) {
+                score += 250;
+                updateHUD();
+                feedbackBox.innerHTML = `<span class="feedback-correct">✨ 太棒了！密碼正確！哆啦A夢超開心～</span>`;
+
+                setTimeout(() => {
+                    nextProblem();
+                }, 1500);
+            } else {
+                score = Math.max(0, score - 50);
+                updateHUD();
+                feedbackBox.innerHTML = `<span class="feedback-wrong">❌ 密碼錯誤！扣除 50 積分，再算一次吧～</span>`;
+            }
+        }
+
+        function nextProblem() {
+            currentProblemIndex++;
+            const currentLevel = levels[currentLevelIndex];
+
+            if (currentProblemIndex >= currentLevel.problems.length) {
+                currentLevelIndex++;
+                currentProblemIndex = 0;
+
+                if (currentLevelIndex >= levels.length) {
+                    triggerVictory();
+                    return;
+                }
+            }
+            loadCurrentProblem();
+        }
+
+        function showHint() {
+            showModal("💡 哆啦A夢的提示", currentHintText, "💡");
+        }
+
+        function showModal(title, message, icon) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('modal-icon').innerText = icon;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        function triggerGameOver(reason) {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-gameover').classList.remove('hidden');
+            document.getElementById('gameover-reason').innerText = reason;
+            document.getElementById('final-score').innerText = score;
+        }
+
+        function triggerVictory() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-victory').classList.remove('hidden');
+            document.getElementById('victory-score').innerText = score;
+            const minutes = Math.floor((180 - timeLeft) / 60);
+            const seconds = (180 - timeLeft) % 60;
+            document.getElementById('victory-time').innerText = `${minutes}分${seconds}秒`;
+        }
+
+        function restartGame() {
+            document.getElementById('screen-gameover').classList.add('hidden');
+            document.getElementById('screen-victory').classList.add('hidden');
+            document.getElementById('screen-welcome').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
